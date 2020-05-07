@@ -29,12 +29,9 @@ argv <- parse_args(parser)
 library(tidyverse)
 library(seqinr)
 
-#partialDeletionFasta <- function(path, percentage, outputpath, genomeToExclude) {
-  df <- read.delim(path)
+partialDeletionFasta <- function(df, percentage, outputpath, genomeToExclude) {
   toExclude <- read.delim(genomeToExclude, header = F)
-  
   df_sampleRows <- df %>%
-    pivot_longer(-contains(c("Position","Ref")), names_to = "Genome", values_to = "Call") %>% 
     filter(!Genome %in% toExclude$V1)
   
   partialDelInfo <- df_sampleRows %>%
@@ -59,14 +56,20 @@ library(seqinr)
   outputFasta <- paste(outputpath, pd, "pd.fasta", sep = "_")
   system(paste("awk '{print \">\"$1; $1=\"\"; print $0}' OFS=", outputTable, ">", outputFasta))
 }
-#fastatoTibble <- function(fasta) {
-  fastaList <- read.fasta(fasta)
-  fastaM <- as_tibble(matrix(unlist(fasta), nrow = length(fasta), byrow = T))
+
+fastatoTibble <- function(fasta) {
+  fastaList <- seqinr::read.fasta(fasta)
+  fastaM <- as_tibble(matrix(unlist(fastaList), nrow = length(fastaList), byrow = T))
+  fastaM$Genome <- names(fastaList)
+  df_sampleRows <- fastaM %>%
+    pivot_longer(-contains("Genome"), names_to = "Position",values_to = "Call")
+  return(df_sampleRows)
 }
 
-#snpTabletoTibble <- (snpTable) {
-  df <- read.delim(path)
-  
+snpTabletoTibble <- (snpTable) {
+  df <- read.delim(snpTable)
+  df_sampleRows <- df %>%
+    pivot_longer(-contains(c("Position","Ref")), names_to = "Genome", values_to = "Call")
 }
   
-#partialDeletionFasta(argv$input, argv$percentage, argv$output, argv$toExclude)
+partialDeletionFasta(argv$input, argv$percentage, argv$output, argv$toExclude)
