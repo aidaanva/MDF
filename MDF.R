@@ -66,7 +66,7 @@ fastatoTibble <- function(fasta) {
   return(df_sampleRows)
 }
 
-snpTabletoTibble <- (snpTable) {
+snpTabletoTibble <- function(snpTable) {
   df <- read.delim(snpTable)
   df_sampleRows <- df %>%
     pivot_longer(-contains(c("Position","Ref")), names_to = "Genome", values_to = "Call")
