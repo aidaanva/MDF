@@ -2,23 +2,23 @@
 library(argparser)
 
 parser <- argparser::arg_parser( 'Produces a fasta file allowing the percentage of missing data in each site specified in -p',
-                                 name = 'SBMD.R')
+                                 name = 'MDF.R')
 
-parser <- add_argument(parser, 'input', 
-                       type='character', 
-                       nargs=1, 
-                       help='Path to the snoTable.tsv produced by MultiVCFAnalyzer')
-parser <- add_argument(parser, 'percentage', 
-                       type="integer", 
-                       nargs=1, 
+parser <- add_argument(parser, 'input',
+                       type='character',
+                       nargs=1,
+                       help='Path to the snpTable.tsv produced by MultiVCFAnalyzer')
+parser <- add_argument(parser, 'percentage',
+                       type="integer",
+                       nargs=1,
                        help='Maximum percentage of missing data for a site to be included')
-parser <- add_argument(parser, 'output', 
-                       type='character', 
-                       nargs=1, 
+parser <- add_argument(parser, 'output',
+                       type='character',
+                       nargs=1,
                        help='Path to output directory')
 parser <- add_argument(parser, 'toExclude',
                        type = 'character',
-                       nargs=1, 
+                       nargs=1,
                        help='File containing genomes to exclude one per line')
 parser <- add_argument(parser, '--fasta',
                        type = 'logical',
@@ -41,25 +41,25 @@ partialDeletionFasta <- function(input, df, percentage, outputpath, genomeToExcl
     filter(percent <= percentage)
   print("Missing information calculated")
   if( input == "fasta") {
-    snpTable_pd <- df_sampleRows %>% 
-      filter(Position %in% partialDelInfo$Position) %>% 
-      mutate(Call = as.character(Call)) %>% 
-      mutate(Final_Call = if_else(Call == '?'| Call == '-' , 'N' , Call)) %>% 
-      select(-Call) %>% 
+    snpTable_pd <- df_sampleRows %>%
+      filter(Position %in% partialDelInfo$Position) %>%
+      mutate(Call = as.character(Call)) %>%
+      mutate(Final_Call = if_else(Call == '?'| Call == '-' , 'N' , Call)) %>%
+      select(-Call) %>%
       pivot_wider(names_from = Position, values_from = Final_Call)
   } else {
-    snpTable_pd <- df_sampleRows %>% 
-      filter(Position %in% partialDelInfo$Position) %>% 
-      mutate(Call = as.character(Call), Ref = as.character(Ref)) %>% 
-      mutate(Final_Call = if_else(Call == '.', Ref, Call)) %>% 
-      select(-Ref, -Call) %>% 
+    snpTable_pd <- df_sampleRows %>%
+      filter(Position %in% partialDelInfo$Position) %>%
+      mutate(Call = as.character(Call), Ref = as.character(Ref)) %>%
+      mutate(Final_Call = if_else(Call == '.', Ref, Call)) %>%
+      select(-Ref, -Call) %>%
       pivot_wider(names_from = Position, values_from = Final_Call)
   }
-  
+
   pd <- 100-percentage
-  
+
   outputTable <- paste(outputpath, pd, "pd.tsv", sep = "_")
-  
+
   write_tsv(snpTable_pd, outputTable, col_names = F)
   print("snpTable_pd saved")
   outputFasta <- paste(outputpath, pd, "pd.fasta", sep = "_")
@@ -70,8 +70,8 @@ partialDeletionFasta <- function(input, df, percentage, outputpath, genomeToExcl
 
 fastatoTibble <- function(fasta) {
   fastaList <- seqinr::read.fasta(fasta, whole.header = T, forceDNAtolower = F)
-  fastaM <- as_tibble(matrix(unlist(fastaList), 
-                             nrow = length(fastaList), 
+  fastaM <- as_tibble(matrix(unlist(fastaList),
+                             nrow = length(fastaList),
                              byrow = T),
                       .name_repair = "universal")
   fastaM$Genome <- names(fastaList)
