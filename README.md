@@ -12,7 +12,7 @@ Aida Andrades Valtueña (aida.andrades[at]gmail.com
 ## Description
 ```bash
 positional arguments:
-  input       Path to the snoTable.tsv produced by MultiVCFAnalyzer
+  input       Path to the snpTable.tsv produced by MultiVCFAnalyzer
   percentage  Maximum percentage of missing data for a site to be
               included
   output      Path to output directory
