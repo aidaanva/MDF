@@ -22,7 +22,7 @@ parser <- add_argument(parser, 'toExclude',
                        help='File containing genomes to exclude one per line')
 parser <- add_argument(parser, '--fasta',
                        type = 'logical',
-                       help = 'Use when inpus is a fasta file',
+                       help = 'Use when input is a fasta file',
                        flag = T, short = '-f')
 argv <- parse_args(parser)
 
