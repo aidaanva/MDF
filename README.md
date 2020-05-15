@@ -20,7 +20,7 @@ positional arguments:
 
 flags:
   -h, --help  show this help message and exit
-  -f, -fasta  Use when inpus is a fasta file
+  -f, -fasta  Use when input is a fasta file
 
 optional arguments:
   -x, --opts  RDS file containing argument values
