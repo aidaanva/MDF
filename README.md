@@ -10,7 +10,7 @@ Rscript MDF.R [--] [--help] [-fasta] [--opts OPTS] input percentage output
 Aida Andrades Valtueña (aida.andrades[at]gmail.com
 
 ## Description
-positional arguments:
+```positional arguments:
   input            Path to the snpTable.tsv produced by
                    MultiVCFAnalyzer or file.fasta. Note: if file.fasta
                    is used as input, the flag --fasta must be included
