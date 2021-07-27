@@ -15,8 +15,7 @@ Aida Andrades Valtueña (aida.andrades[at]gmail.com
                    MultiVCFAnalyzer or file.fasta. Note: if file.fasta
                    is used as input, the flag --fasta must be included
                    for proper parsing
-  percentage       Maximum percentage of missing data for a site to be
-                   included
+  percentage       Partial deletion percentage
   output           Path to output directory
 
 flags:
