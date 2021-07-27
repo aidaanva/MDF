@@ -11,7 +11,7 @@ parser <- add_argument(parser, 'input',
 parser <- add_argument(parser, 'percentage',
                        type="integer",
                        nargs=1,
-                       help='Maximum percentage of missing data for a site to be included')
+                       help='Partial deletion percentage')
 parser <- add_argument(parser, 'output',
                        type='character',
                        nargs=1,
@@ -45,12 +45,16 @@ partialDeletionFasta <- function(input, inputdf, percentage, outputpath, genomeT
   } else {
     df <- excludingGenomes(inputdf, genomeToExclude)
   }
+  pd <- 100 - percentage
+  
   partialDelInfo <- df %>%
     group_by(Position) %>%
     summarise(missing=sum(Call== "N"), total=n()) %>%
     mutate(percent = (missing/total)*100) %>%
-    filter(percent <= percentage)
+    filter(percent <= pd)
+  numPos=nrow(partialDelInfo)
   print("Missing information calculated")
+  print(paste("Positions included in the alignment", numPos, sep = " "))
   if( input == "fasta") {
     snpTable_pd <- df %>%
       filter(Position %in% partialDelInfo$Position) %>%
@@ -67,12 +71,11 @@ partialDeletionFasta <- function(input, inputdf, percentage, outputpath, genomeT
       pivot_wider(names_from = Position, values_from = Final_Call)
   }
 
-
-  outputTable <- paste(outputpath, percentage, "pd.tsv", sep = "_")
+  outputTable <- paste(outputpath, percentage, "pd", numPos,"positions.tsv", sep = "_")
 
   write_tsv(snpTable_pd, outputTable, col_names = F)
   print("snpTable_pd saved")
-  outputFasta <- paste(outputpath, percentage, "pd.fasta", sep = "_")
+  outputFasta <- paste(outputpath, percentage, "pd", numPos, "positions.fasta", sep = "_")
   system(paste("awk '{print \">\"$1; $1=\"\"; print $0}' OFS=", outputTable, ">", outputFasta))
   write_tsv(snpTable_pd, outputTable, col_names = T)
   print("Fasta_dp saved")
